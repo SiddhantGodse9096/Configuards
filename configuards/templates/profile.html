@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="profile-content">
+            <div class="profile-header">
+                <div class="profile-avatar">{{ user[0]|upper }}</div>
+                <h2>{{ user_info.fullname }}</h2>
+            </div>
+            
+            <div class="profile-info" id="viewMode">
+                <div class="info-row">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value">{{ user_info.fullname }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user_info.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Mobile Number</span>
+                    <span class="info-value">{{ user_info.mobile }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Builder ID</span>
+                    <span class="info-value">{{ user_info.aws_builder_id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Status</span>
+                    <span class="info-value" style="{% if aws_configured %}color: #155724; font-weight: bold;{% else %}color: #856404; font-weight: bold;{% endif %}">
+                        {% if aws_configured %}✓ Connected{% else %}✗ Not Configured{% endif %}
+                    </span>
+                </div>
+                <button onclick="toggleEdit()" class="action-btn" style="width: auto; padding: 10px 30px; margin: 20px auto;">Edit Profile</button>
+            </div>
+            
+            <form method="POST" class="profile-info" id="editMode" style="display: none;">
+                <div class="info-row">
+                    <span class="info-label">Full Name</span>
+                    <input type="text" name="fullname" value="{{ user_info.fullname }}" required style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user_info.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Mobile Number</span>
+                    <input type="tel" name="mobile" value="{{ user_info.mobile }}" required style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Builder ID</span>
+                    <input type="text" name="aws_builder_id" value="{{ user_info.aws_builder_id }}" required style="width: auto; margin: 0;">
+                </div>
+                <h3 style="margin-top: 30px; color: #667eea;">AWS Credentials (Optional)</h3>
+                <div class="info-row">
+                    <span class="info-label">AWS Access Key</span>
+                    <input type="text" name="aws_access_key" placeholder="Enter AWS Access Key" style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Secret Key</span>
+                    <input type="password" name="aws_secret_key" placeholder="Enter AWS Secret Key" style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Region</span>
+                    <select name="aws_region" style="width: auto; margin: 0; padding: 10px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                        <option value="us-east-1">US East (N. Virginia)</option>
+                        <option value="us-west-2">US West (Oregon)</option>
+                        <option value="eu-west-1">EU (Ireland)</option>
+                        <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                    </select>
+                </div>
+                <h3 style="margin-top: 30px; color: #667eea;">AWS Credentials (Optional)</h3>
+                <div class="info-row">
+                    <span class="info-label">AWS Access Key</span>
+                    <input type="text" name="aws_access_key" placeholder="Enter AWS Access Key" style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Secret Key</span>
+                    <input type="password" name="aws_secret_key" placeholder="Enter AWS Secret Key" style="width: auto; margin: 0;">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">AWS Region</span>
+                    <select name="aws_region" style="width: auto; margin: 0; padding: 10px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                        <option value="us-east-1">US East (N. Virginia)</option>
+                        <option value="us-west-2">US West (Oregon)</option>
+                        <option value="eu-west-1">EU (Ireland)</option>
+                        <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                    </select>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="action-btn" style="width: auto; padding: 10px 30px; margin: 20px 10px;">Save Changes</button>
+                    <button type="button" onclick="toggleEdit()" class="action-btn" style="width: auto; padding: 10px 30px; margin: 20px 10px; background: #f8f9fa; color: #667eea;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+        
+        function toggleEdit() {
+            const viewMode = document.getElementById('viewMode');
+            const editMode = document.getElementById('editMode');
+            if (viewMode.style.display === 'none') {
+                viewMode.style.display = 'flex';
+                editMode.style.display = 'none';
+            } else {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'flex';
+            }
+        }
+    </script>

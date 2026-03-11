@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="card">
+        <h2>Login to <span class="highlight">CONFIGUARDS</span></h2>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST">
+            <div style="position: relative;">
+                <input type="email" name="username" placeholder="Email Address" required style="padding-right: 40px;">
+                <i class="fa fa-envelope" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #667eea;"></i>
+            </div>
+            <div style="position: relative;">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <i id="toggleIcon" onclick="togglePassword()" class="fa fa-eye" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #667eea;"></i>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+    </div>
+    <script>
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.className = 'fa fa-eye-slash';
+            } else {
+                pwd.type = 'password';
+                icon.className = 'fa fa-eye';
+            }
+        }
+    </script>
+</body>
+</html>

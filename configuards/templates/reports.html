@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-content">
+            <h2>Security Reports</h2>
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Weekly Security Summary</h3>
+                    <p class="report-date">Generated: {{ current_date }}</p>
+                    <div class="report-stats">
+                        <div class="stat">
+                            <span class="stat-number">{{ stats.total }}</span>
+                            <span class="stat-label">Total Findings</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number critical">{{ stats.high }}</span>
+                            <span class="stat-label">High Severity</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number warning">{{ stats.medium }}</span>
+                            <span class="stat-label">Medium Severity</span>
+                        </div>
+                    </div>
+                    <button onclick="window.location.href='{{ url_for('download_report', report_type='weekly-summary') }}'" class="btn-download">Download Report</button>
+                </div>
+                
+                <div class="report-card">
+                    <h3>Compliance Report</h3>
+                    <p class="report-date">Last Updated: {{ current_date }}</p>
+                    <div class="compliance-score">
+                        <div class="score-circle">
+                            <span class="score">{{ stats.compliance }}%</span>
+                        </div>
+                        <p>Compliance Score</p>
+                    </div>
+                    <button onclick="window.location.href='{{ url_for('download_report', report_type='compliance') }}'" class="btn-download">Download Report</button>
+                </div>
+                
+                <div class="report-card">
+                    <h3>Resource Inventory</h3>
+                    <p class="report-date">Generated: {{ current_date }}</p>
+                    <div class="report-stats">
+                        <div class="stat">
+                            <span class="stat-number">{{ stats.resources }}</span>
+                            <span class="stat-label">Total Resources</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">{{ stats.scanned }}</span>
+                            <span class="stat-label">Scanned</span>
+                        </div>
+                    </div>
+                    <button onclick="window.location.href='{{ url_for('download_report', report_type='resource-inventory') }}'" class="btn-download">Download Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+    </script>

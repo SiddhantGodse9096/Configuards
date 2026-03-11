@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .settings-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+        }
+        .settings-card h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .settings-card h3::before {
+            content: '⚙';
+            font-size: 24px;
+        }
+        .setting-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-label {
+            color: #333;
+            font-weight: 500;
+        }
+        .setting-description {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 26px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        .security-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .security-btn {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            color: #667eea;
+            text-decoration: none;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .security-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        .security-btn::after {
+            content: '→';
+            font-size: 18px;
+        }
+        .danger-zone {
+            background: #fff5f5;
+            border-left-color: #e74c3c;
+        }
+        .danger-zone h3::before {
+            content: '⚠';
+        }
+        .danger-btn {
+            background: #fee;
+            color: #c00;
+            border-color: #fcc;
+        }
+        .danger-btn:hover {
+            background: #c00;
+            color: white;
+            border-color: #c00;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-content">
+            <h2><span class="highlight">Settings & Preferences</span></h2>
+            <p style="color: #666; margin-bottom: 30px;">Manage your account settings, notifications, and security preferences</p>
+            
+            <div class="settings-grid">
+                <!-- Notification Settings -->
+                <div class="settings-card">
+                    <h3>Notifications</h3>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Email Alerts</div>
+                            <div class="setting-description">Receive email notifications for critical findings</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Weekly Reports</div>
+                            <div class="setting-description">Get weekly security summary reports</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">SMS Alerts</div>
+                            <div class="setting-description">SMS notifications for high severity issues</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Push Notifications</div>
+                            <div class="setting-description">Browser push notifications</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Scan Settings -->
+                <div class="settings-card">
+                    <h3>Scanning</h3>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Automatic Scans</div>
+                            <div class="setting-description">Run daily security scans automatically</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Real-time Monitoring</div>
+                            <div class="setting-description">Continuous resource monitoring</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Include Archived</div>
+                            <div class="setting-description">Scan archived and stopped resources</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Deep Scan</div>
+                            <div class="setting-description">Perform comprehensive security analysis</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-card">
+                    <h3>Security</h3>
+                    <div class="security-actions">
+                        <a href="{{ url_for('change_password') }}" class="security-btn">
+                            <span>Change Password</span>
+                        </a>
+                        <a href="{{ url_for('two_factor') }}" class="security-btn">
+                            <span>Two-Factor Authentication</span>
+                        </a>
+                        <a href="{{ url_for('profile') }}" class="security-btn">
+                            <span>AWS Credentials</span>
+                        </a>
+                        <a href="#" class="security-btn">
+                            <span>Session Management</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="settings-card">
+                    <h3>Privacy</h3>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Data Collection</div>
+                            <div class="setting-description">Allow anonymous usage analytics</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Activity Logging</div>
+                            <div class="setting-description">Log all security actions</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">Share Reports</div>
+                            <div class="setting-description">Allow report sharing with team</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-card danger-zone">
+                    <h3>Danger Zone</h3>
+                    <div class="security-actions">
+                        <a href="#" onclick="return confirm('Clear all scan history?')" class="security-btn danger-btn">
+                            <span>Clear Scan History</span>
+                        </a>
+                        <a href="#" onclick="return confirm('Disconnect AWS account?')" class="security-btn danger-btn">
+                            <span>Disconnect AWS</span>
+                        </a>
+                        <a href="#" onclick="return confirm('This will delete your account permanently!')" class="security-btn danger-btn">
+                            <span>Delete Account</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

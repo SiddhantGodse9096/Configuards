@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-icon critical">⚠</div>
+                <div class="stat-info">
+                    <h3>{{ stats.critical }}</h3>
+                    <p>Critical Issues</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon warning">⚡</div>
+                <div class="stat-info">
+                    <h3>{{ stats.high }}</h3>
+                    <p>High Severity</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon medium">●</div>
+                <div class="stat-info">
+                    <h3>{{ stats.medium }}</h3>
+                    <p>Medium Severity</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success">✓</div>
+                <div class="stat-info">
+                    <h3>{{ stats.resolved }}</h3>
+                    <p>Resolved</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-content">
+                <h2>Recent Security Findings</h2>
+                <div class="findings-grid">
+                    {% for f in findings %}
+                    <div class="finding-card">
+                        <div class="finding-header">
+                            <h3>{{ f.resource }}</h3>
+                            <span class="severity {{ f.severity }}">{{ f.severity|upper }}</span>
+                        </div>
+                        <p class="finding-issue">{{ f.issue }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="sidebar-card">
+                    <h3>Quick Actions</h3>
+                    <a href="{{ url_for('findings') }}" class="action-btn">View All Findings</a>
+                    <a href="{{ url_for('reports') }}" class="action-btn">Generate Report</a>
+                    <button onclick="scanResources()" class="action-btn" id="scanBtn">Scan Resources</button>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        {% for activity in recent_activity %}
+                        <div class="activity-item">
+                            <span class="activity-dot"></span>
+                            <div>
+                                <p class="activity-text">{{ activity.text }}</p>
+                                <span class="activity-time">{{ activity.time }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3>Compliance Score</h3>
+                    <div class="compliance-meter">
+                        <div class="compliance-circle">
+                            <span class="compliance-score">{{ stats.compliance }}%</span>
+                        </div>
+                        <p class="compliance-label">Overall Compliance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+        
+        function scanResources() {
+            const btn = document.getElementById('scanBtn');
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+            
+            fetch('/scan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.textContent = 'Scan Resources';
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.textContent = 'Scan Resources';
+                alert('Error: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>

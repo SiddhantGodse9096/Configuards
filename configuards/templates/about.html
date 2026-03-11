@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Our Services - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-content">
+            <h2>About Our <span class="highlight">Services</span></h2>
+            <div class="service-section">
+                <h3>🔒 AWS Security Configuration Monitoring</h3>
+                <p>Configuards provides comprehensive security monitoring for your AWS infrastructure. We continuously scan and analyze your cloud resources to identify misconfigurations and security vulnerabilities.</p>
+            </div>
+            
+            <div class="service-section">
+                <h3>📊 Real-time Security Findings</h3>
+                <p>Get instant alerts on critical security issues across your AWS services including EC2, S3, RDS, Lambda, VPC, CloudFront, IAM, and DynamoDB. Our platform prioritizes findings by severity to help you focus on what matters most.</p>
+            </div>
+            
+            <div class="service-section">
+                <h3>📈 Compliance Reporting</h3>
+                <p>Generate detailed compliance reports to meet industry standards and regulatory requirements. Track your security posture over time with comprehensive analytics and insights.</p>
+            </div>
+            
+            <div class="service-section">
+                <h3>⚡ Automated Security Scans</h3>
+                <p>Schedule automated security scans to continuously monitor your AWS environment. Receive notifications when new vulnerabilities are detected and track remediation progress.</p>
+            </div>
+            
+            <div class="service-section">
+                <h3>🎯 Best Practices Recommendations</h3>
+                <p>Get actionable recommendations based on AWS security best practices. Our platform helps you implement security controls and maintain a strong security posture.</p>
+            </div>
+            
+            <div class="service-section">
+                <h3>📋 Resource Inventory Management</h3>
+                <p>Maintain a complete inventory of your AWS resources with detailed security assessments. Track changes and monitor resource configurations across your entire infrastructure.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+    </script>

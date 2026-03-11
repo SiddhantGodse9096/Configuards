@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Findings - Configuards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><a href="{{ url_for('dashboard') }}" style="color: white; text-decoration: none;">← &nbsp;&nbsp;CONFIGUARDS</a></div>
+        <div class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('findings') }}" class="nav-link">Findings</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            <a href="{{ url_for('feedback') }}" class="nav-link">Feedback</a>
+        </div>
+        <div class="nav-user">
+            <div class="profile-pic">{{ user[0]|upper }}</div>
+            <span>{{ user }}</span>
+            <div class="dropdown">
+                <button class="dropdown-btn">▼</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('about') }}">About Our Services</a>
+                    <a href="{{ url_for('settings') }}">Settings</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-content">
+            <h2>All Security Findings</h2>
+            <div class="findings-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource Type</th>
+                            <th>Resource Name</th>
+                            <th>Issue</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in findings %}
+                        <tr>
+                            <td>{{ f.resource }}</td>
+                            <td>{{ f.name }}</td>
+                            <td>{{ f.issue }}</td>
+                            <td><span class="severity {{ f.severity }}">{{ f.severity|upper }}</span></td>
+                            <td><span class="status {{ f.status }}">{{ f.status }}</span></td>
+                            <td>
+                                {% if f.get('fix_available') %}
+                                <button onclick="fixIssue('{{ f.id }}', '{{ f.resource }}', '{{ f.name }}')" style="padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">Fix Issue</button>
+                                {% else %}
+                                <span style="color: #999;">Manual Fix Required</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+            
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+        
+        function fixIssue(findingId, resourceType, resourceName) {
+            if (!confirm('Do you want to fix this security issue?\n\nResource: ' + resourceName + '\nType: ' + resourceType)) {
+                return;
+            }
+            
+            fetch('/remediate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    finding_id: findingId,
+                    resource_type: resourceType,
+                    resource_name: resourceName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Success: ' + data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
+    </script>
